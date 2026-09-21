@@ -74,41 +74,8 @@ function bytesToBase64Url(bytes: Uint8Array): string {
   return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-function base64UrlToBytes(s: string): Uint8Array {
-  const b64 = s.replace(/-/g, '+').replace(/_/g, '/');
-  const bin = atob(b64 + '='.repeat((4 - (b64.length % 4)) % 4));
-  const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return bytes;
-}
-
 export function encodeReceipt(p: DigitalReceiptPayload): string {
   return bytesToBase64Url(new TextEncoder().encode(JSON.stringify(p)));
-}
-
-export type ReceiptDecodeResult =
-  | { ok: true; receipt: DigitalReceiptPayload }
-  | { ok: false; reason: 'missing' | 'invalid' | 'version' };
-
-export function decodeReceipt(encoded: string): ReceiptDecodeResult {
-  if (!encoded) return { ok: false, reason: 'missing' };
-  try {
-    const json = new TextDecoder().decode(base64UrlToBytes(encoded));
-    const data = JSON.parse(json) as DigitalReceiptPayload;
-    if (data?.v !== RECEIPT_PAYLOAD_VERSION) return { ok: false, reason: 'version' };
-    if (!data.r || !data.d || !Array.isArray(data.i) || typeof data.t !== 'number') {
-      return { ok: false, reason: 'invalid' };
-    }
-    return { ok: true, receipt: data };
-  } catch {
-    return { ok: false, reason: 'invalid' };
-  }
-}
-
-/** Parse #data=... from the URL fragment. */
-export function readReceiptFromHash(hash: string = window.location.hash): ReceiptDecodeResult {
-  const m = /#data=([^&]+)/.exec(hash);
-  return decodeReceipt(m?.[1] ?? '');
 }
 
 /** Full customer-facing viewer URL for a transaction — the QR content. */

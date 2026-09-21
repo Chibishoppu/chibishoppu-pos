@@ -4,14 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chibishoppu — Digital Receipt</title>
-    <meta name="description" content="Chibishoppu digital receipt viewer" />
-    <link rel="icon" type="image/jpeg" href="/ChibishoppuLogo2.jpeg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!--
+      Legacy redirect: receipts generated before the viewer moved to its own
+      repo point here. Forward the #data= fragment to chibishoppu-receipt.
+      The fragment never reaches any server.
+    -->
+    <script>
+      window.location.replace('https://mia9.github.io/chibishoppu-receipt/' + window.location.hash);
+    </script>
   </head>
-  <body class="bg-[#F4F9FE] text-[#2D3548] antialiased">
-    <div id="root"></div>
-    <script type="module" src="/src/receipt/main.tsx"></script>
+  <body>
+    <p>Opening your receipt…</p>
   </body>
 </html>
