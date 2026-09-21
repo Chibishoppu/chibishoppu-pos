@@ -1,0 +1,6 @@
+{
+  "name": "Chibishoppu POS",
+  "description": "A charming anime-chibi styled POS and inventory system for ACG convention booth vendors, featuring instant checkout, stock tracking, and daily sales reports.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
