@@ -92,7 +92,6 @@ export interface EventConfig {
   currencyCode: string;
   openingCashFloat: number;
   taxPercent: number;
-  stampRallyThreshold: number; // e.g. spend RM15 get 1 stamp
   soundEffectsEnabled: boolean;
 }
 

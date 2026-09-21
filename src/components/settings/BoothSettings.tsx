@@ -44,9 +44,6 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
   const [currencyCode, setCurrencyCode] = useState(eventConfig.currencyCode);
   const [openingCashFloat, setOpeningCashFloat] = useState(eventConfig.openingCashFloat.toString());
   const [taxPercent, setTaxPercent] = useState(eventConfig.taxPercent.toString());
-  const [stampRallyThreshold, setStampRallyThreshold] = useState(
-    eventConfig.stampRallyThreshold.toString()
-  );
   const [soundEnabled, setSoundEnabled] = useState(eventConfig.soundEffectsEnabled);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
@@ -60,7 +57,6 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
       currencyCode: currencyCode || 'MYR',
       openingCashFloat: parseFloat(openingCashFloat) || 0,
       taxPercent: parseFloat(taxPercent) || 0,
-      stampRallyThreshold: parseFloat(stampRallyThreshold) || 15,
       soundEffectsEnabled: soundEnabled,
     };
 
@@ -211,44 +207,26 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
             </div>
           </div>
 
-          {/* Stamp Rally Threshold & Sound */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* Sound Effects */}
+          <div className="p-3 rounded-2xl bg-[#F4F9FE] border-2 border-[#2D3548] shadow-[2px_2px_0px_#2D3548] flex items-center justify-between">
             <div>
-              <label className="text-[11px] font-black uppercase text-[#2D3548] block mb-1">
-                Stamp Rally Spend Threshold ({currencySymbol})
-              </label>
-              <input
-                type="number"
-                value={stampRallyThreshold}
-                onChange={(e) => setStampRallyThreshold(e.target.value)}
-                min="1"
-                className="w-full bg-[#F4F9FE] border-2 border-[#2D3548] rounded-xl px-3 py-2 text-xs font-bold text-[#2D3548] shadow-[2px_2px_0px_#2D3548] focus:outline-none"
-              />
-              <span className="text-[10px] font-bold text-[#616D86] mt-0.5 block">
-                Attendee receives 1 stamp on receipt if spending this or more
-              </span>
+              <span className="text-xs font-black text-[#2D3548] block">Kawaii Audio Effects</span>
+              <span className="text-[10px] font-bold text-[#616D86]">Coin & chime audio feedback</span>
             </div>
-
-            <div className="p-3 rounded-2xl bg-[#F4F9FE] border-2 border-[#2D3548] shadow-[2px_2px_0px_#2D3548] flex items-center justify-between">
-              <div>
-                <span className="text-xs font-black text-[#2D3548] block">Kawaii Audio Effects</span>
-                <span className="text-[10px] font-bold text-[#616D86]">Coin & chime audio feedback</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  const next = !soundEnabled;
-                  setSoundEnabled(next);
-                  soundEngine.setEnabled(next);
-                  if (next) soundEngine.playCoin();
-                }}
-                className={`px-3 py-1 rounded-xl text-xs font-black border-2 border-[#2D3548] shadow-[1px_1px_0px_#2D3548] transition-all ${
-                  soundEnabled ? 'bg-[#A3E7D0] text-[#1B5E45]' : 'bg-slate-200 text-slate-600'
-                }`}
-              >
-                {soundEnabled ? 'ENABLED 🔊' : 'MUTED 🔇'}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const next = !soundEnabled;
+                setSoundEnabled(next);
+                soundEngine.setEnabled(next);
+                if (next) soundEngine.playCoin();
+              }}
+              className={`px-3 py-1 rounded-xl text-xs font-black border-2 border-[#2D3548] shadow-[1px_1px_0px_#2D3548] transition-all ${
+                soundEnabled ? 'bg-[#A3E7D0] text-[#1B5E45]' : 'bg-slate-200 text-slate-600'
+              }`}
+            >
+              {soundEnabled ? 'ENABLED 🔊' : 'MUTED 🔇'}
+            </button>
           </div>
 
           <div className="flex justify-end pt-2">

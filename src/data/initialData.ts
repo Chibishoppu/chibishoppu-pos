@@ -8,6 +8,5 @@ export const INITIAL_EVENT_CONFIG: EventConfig = {
   currencyCode: 'MYR',
   openingCashFloat: 0,
   taxPercent: 0,
-  stampRallyThreshold: 15.00,
   soundEffectsEnabled: true,
 };

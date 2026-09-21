@@ -241,18 +241,6 @@ Arigato gozaimasu for supporting our handmade craft booth! 🌸`;
             </div>
           </div>
 
-          {/* Stamp Rally Badge */}
-          {transaction.total >= eventConfig.stampRallyThreshold && (
-            <div className="my-2.5 p-2 bg-[#FFD6E8] border-2 border-[#2D3548] rounded-xl text-center font-sans shadow-[2px_2px_0px_#2D3548]">
-              <span className="text-xs font-black text-[#BE185D] block">
-                ⭐ ACG STAMP RALLY CERTIFIED ⭐
-              </span>
-              <span className="text-[10px] font-bold text-[#BE185D]">
-                Collect 3 booth stamps across event days for a free mystery gacha sticker!
-              </span>
-            </div>
-          )}
-
           {/* Footer Note */}
           <div className="text-center pt-2 text-[11px] text-[#616D86] font-sans font-bold">
             <p className="text-[#2D3548] font-black">Arigato for visiting Chibishoppu! 🌸</p>

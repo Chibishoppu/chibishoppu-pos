@@ -629,12 +629,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
               </div>
 
-              {/* Stamp Rally Perk Notice if threshold reached */}
-              {finalTotal >= eventConfig.stampRallyThreshold && (
-                <div className="mt-3 p-2.5 rounded-2xl bg-[#FFD6E8] border-2 border-[#2D3548] text-xs font-black text-[#BE185D] shadow-[2px_2px_0px_#2D3548]">
-                  ⭐ Qualifies for <strong>+1 ACG Booth Stamp</strong> (Spend &gt; {formatCurrency(eventConfig.stampRallyThreshold, eventConfig.currencySymbol)})!
-                </div>
-              )}
             </div>
 
             <div className="mt-4">
