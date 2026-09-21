@@ -551,7 +551,7 @@ export default function App() {
         <footer className="h-10 bg-[#2D3548] text-white flex items-center px-4 sm:px-8 justify-between text-[10px] sm:text-xs font-black uppercase tracking-widest select-none border-t-2 border-[#2D3548]">
           <div className="flex items-center gap-2 min-w-0">
             <span className="w-2 h-2 shrink-0 rounded-full bg-[#A3E7D0] inline-block animate-pulse"></span>
-            <span className="truncate">SYSTEM: ONLINE • PRINTER: READY • CONVENTION: {eventConfig.eventName.toUpperCase()}</span>
+            <span className="truncate">SYSTEM: ONLINE • CONVENTION: {eventConfig.eventName.toUpperCase()}</span>
             {currentTab === 0 && <span className="text-[#FFE680] shrink-0">{timeStr}</span>}
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -573,7 +573,7 @@ export default function App() {
             </div>
 
             <div className="hidden sm:block text-slate-300">
-              © 2026 CHIBISHOPPU • ACG BOOTH EDITION
+              v{__APP_VERSION__} • BUILD {__BUILD_TIME__.slice(0, 10)} • © CHIBISHOPPU
             </div>
           </div>
         </footer>
