@@ -3,6 +3,7 @@ build/
 dist/
 .vs/
 .vscode/
+*.code-workspace
 coverage/
 .DS_Store
 *.log
