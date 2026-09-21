@@ -34,22 +34,13 @@ export interface DigitalReceiptPayload {
 export const RECEIPT_PAYLOAD_VERSION = 1;
 
 /**
- * Public viewer base URL. The customer's phone cannot reach the POS device's
- * own origin (Android WebView = https://localhost), so when running on the
- * device we point at the known GitHub Pages deployment. On the hosted site
- * itself we derive it from the live origin + Vite base. Override entirely
- * with VITE_RECEIPT_BASE if the deployment URL ever changes.
+ * Public viewer base URL — the receipt viewer is a separate app deployed to
+ * its own GitHub Pages site (chibishoppu-receipt). The customer's phone
+ * cannot reach the POS device's own origin (Android WebView = localhost),
+ * so the POS always points at the public deployment. Override with
+ * VITE_RECEIPT_BASE if the receipt site URL ever changes.
  */
-const FALLBACK_VIEWER_BASE = 'https://mia9.github.io/chibishoppu-pos/';
-
-function viewerBaseUrl(): string {
-  const override = import.meta.env.VITE_RECEIPT_BASE as string | undefined;
-  if (override) return override.endsWith('/') ? override : `${override}/`;
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-    return window.location.origin + import.meta.env.BASE_URL;
-  }
-  return FALLBACK_VIEWER_BASE;
-}
+const VIEWER_BASE = import.meta.env.VITE_RECEIPT_BASE || 'https://mia9.github.io/chibishoppu-receipt/';
 
 const r2 = (n: number) => Math.round(n * 100) / 100;
 
@@ -122,5 +113,6 @@ export function readReceiptFromHash(hash: string = window.location.hash): Receip
 
 /** Full customer-facing viewer URL for a transaction — the QR content. */
 export function buildDigitalReceiptUrl(tx: Transaction, cfg: EventConfig): string {
-  return `${viewerBaseUrl()}receipt#data=${encodeReceipt(buildReceiptPayload(tx, cfg))}`;
+  const base = VIEWER_BASE.endsWith('/') ? VIEWER_BASE : `${VIEWER_BASE}/`;
+  return `${base}#data=${encodeReceipt(buildReceiptPayload(tx, cfg))}`;
 }
