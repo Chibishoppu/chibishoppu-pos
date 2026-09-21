@@ -72,3 +72,10 @@
   border-radius: 6px;
   border: 2px solid #EBF4FC;
 }
+
+/* Hide action buttons when printing (digital receipt Save-as-PDF) */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

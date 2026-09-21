@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -16,7 +16,9 @@ import {
   Close as CloseIcon,
   CheckCircle as CheckIcon,
   Share as ShareIcon,
+  QrCode2 as QrIcon,
 } from '@mui/icons-material';
+import { DigitalReceiptDialog } from '../receipt/DigitalReceiptDialog';
 import { Transaction, EventConfig } from '../../types';
 import { formatCurrency } from '../../utils/export';
 const officialLogo = `${import.meta.env.BASE_URL}ChibishoppuLogo2.jpeg`;
@@ -35,6 +37,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
   eventConfig,
 }) => {
   const receiptRef = useRef<HTMLDivElement>(null);
+  const [qrOpen, setQrOpen] = useState(false);
 
   if (!transaction) return null;
 
@@ -57,6 +60,7 @@ Arigato gozaimasu for supporting our handmade craft booth! 🌸`;
   };
 
   return (
+    <>
     <Dialog
       open={open}
       onClose={onClose}
@@ -266,6 +270,13 @@ Arigato gozaimasu for supporting our handmade craft booth! 🌸`;
           <span>Copy</span>
         </button>
         <button
+          onClick={() => setQrOpen(true)}
+          className="flex items-center gap-1 bg-[#D8EDFC] hover:bg-[#BEE0FB] text-[#2D3548] border-2 border-[#2D3548] px-3 py-1.5 rounded-xl font-black text-xs uppercase shadow-[2px_2px_0px_#2D3548] active:translate-y-0.5"
+        >
+          <QrIcon sx={{ fontSize: 14 }} />
+          <span>QR</span>
+        </button>
+        <button
           onClick={handlePrint}
           className="flex items-center gap-1 bg-white hover:bg-[#F4F9FE] text-[#2D3548] border-2 border-[#2D3548] px-3 py-1.5 rounded-xl font-black text-xs uppercase shadow-[2px_2px_0px_#2D3548] active:translate-y-0.5"
         >
@@ -280,5 +291,13 @@ Arigato gozaimasu for supporting our handmade craft booth! 🌸`;
         </button>
       </div>
     </Dialog>
+
+    <DigitalReceiptDialog
+      open={qrOpen}
+      onClose={() => setQrOpen(false)}
+      transaction={transaction}
+      eventConfig={eventConfig}
+    />
+    </>
   );
 };
