@@ -31,6 +31,7 @@ import { ReceiptModal } from './components/pos/ReceiptModal';
 import { InventoryManager } from './components/inventory/InventoryManager';
 import { DailyReports } from './components/reports/DailyReports';
 import { BoothSettings } from './components/settings/BoothSettings';
+import { BackupRestore } from './components/settings/BackupRestore';
 import * as dbService from './services/db';
 
 export default function App() {
@@ -447,6 +448,21 @@ export default function App() {
     });
   };
 
+  // Reload all state after a backup restore
+  const handleDataRestored = async () => {
+    const [p, t, cfg, c] = await Promise.all([
+      dbService.fetchProducts(),
+      dbService.fetchTransactions(),
+      dbService.fetchEventConfig(),
+      dbService.fetchCart(),
+    ]);
+    setProducts(p);
+    setTransactions(t);
+    setEventConfig(cfg);
+    setCart(c);
+    clearProductImageCache();
+  };
+
   const totalCartCount = cart.reduce((s, i) => s + i.quantity, 0);
 
   // Loading splash
@@ -542,6 +558,10 @@ export default function App() {
                 eventConfig={eventConfig}
                 onUpdateEventConfig={setEventConfig}
                 onResetDemoData={handleResetDemoData}
+              />
+              <BackupRestore
+                onNotify={(message, severity) => setToast({ open: true, message, severity })}
+                onRestored={handleDataRestored}
               />
             </Container>
           )}
