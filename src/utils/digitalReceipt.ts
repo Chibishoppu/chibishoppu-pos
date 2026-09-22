@@ -40,7 +40,7 @@ export const RECEIPT_PAYLOAD_VERSION = 1;
  * so the POS always points at the public deployment. Override with
  * VITE_RECEIPT_BASE if the receipt site URL ever changes.
  */
-const VIEWER_BASE = import.meta.env.VITE_RECEIPT_BASE || 'https://mia9.github.io/chibishoppu-receipt/';
+const VIEWER_BASE = import.meta.env.VITE_RECEIPT_BASE || 'https://chibishoppu.github.io/chibishoppu-receipt/';
 
 const r2 = (n: number) => Math.round(n * 100) / 100;
 
