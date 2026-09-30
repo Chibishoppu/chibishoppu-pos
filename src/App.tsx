@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import {
   CssBaseline,
@@ -28,7 +28,9 @@ import { QuickCustomItemModal } from './components/pos/QuickCustomItemModal';
 import { CheckoutModal } from './components/pos/CheckoutModal';
 import { ReceiptModal } from './components/pos/ReceiptModal';
 import { InventoryManager } from './components/inventory/InventoryManager';
-import { DailyReports } from './components/reports/DailyReports';
+const DailyReports = lazy(() =>
+  import('./components/reports/DailyReports').then((m) => ({ default: m.DailyReports }))
+);
 import { BoothSettings } from './components/settings/BoothSettings';
 import { BackupRestore } from './components/settings/BackupRestore';
 import * as dbService from './services/db';
@@ -537,11 +539,22 @@ export default function App() {
           {/* TAB 2: DAILY SALES REPORTS & ANALYTICS */}
           {currentTab === 2 && (
             <Container maxWidth="xl" sx={{ p: 0 }}>
-              <DailyReports
-                transactions={transactions}
-                eventConfig={eventConfig}
-                onRefundTransaction={handleRefundTransaction}
-              />
+              <Suspense
+                fallback={
+                  <div className="flex items-center justify-center py-16">
+                    <div className="text-center">
+                      <div className="text-3xl mb-2 animate-pulse">📊</div>
+                      <div className="text-sm font-bold text-[#616D86]">Loading reports…</div>
+                    </div>
+                  </div>
+                }
+              >
+                <DailyReports
+                  transactions={transactions}
+                  eventConfig={eventConfig}
+                  onRefundTransaction={handleRefundTransaction}
+                />
+              </Suspense>
             </Container>
           )}
 
