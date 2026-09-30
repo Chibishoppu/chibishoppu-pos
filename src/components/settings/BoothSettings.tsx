@@ -24,8 +24,6 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
   const [location, setLocation] = useState(eventConfig.location || '');
   const [startDate, setStartDate] = useState(eventConfig.startDate || '');
   const [endDate, setEndDate] = useState(eventConfig.endDate || '');
-  const [currencySymbol, setCurrencySymbol] = useState(eventConfig.currencySymbol);
-  const [currencyCode, setCurrencyCode] = useState(eventConfig.currencyCode);
   const [openingCashFloat, setOpeningCashFloat] = useState(eventConfig.openingCashFloat.toString());
   const [taxPercent, setTaxPercent] = useState(eventConfig.taxPercent.toString());
   const [soundEnabled, setSoundEnabled] = useState(eventConfig.soundEffectsEnabled);
@@ -40,8 +38,8 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
       location: location.trim(),
       startDate,
       endDate,
-      currencySymbol: currencySymbol || 'RM',
-      currencyCode: currencyCode || 'MYR',
+      currencySymbol: eventConfig.currencySymbol || 'RM',
+      currencyCode: eventConfig.currencyCode || 'MYR',
       openingCashFloat: parseFloat(openingCashFloat) || 0,
       taxPercent: parseFloat(taxPercent) || 0,
       soundEffectsEnabled: soundEnabled,
@@ -172,7 +170,7 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-[#2D3548]">
-                  {currencySymbol}
+                  {eventConfig.currencySymbol}
                 </span>
                 <input
                   type="number"
@@ -196,10 +194,10 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
               </label>
               <input
                 type="text"
-                value={currencySymbol}
-                onChange={(e) => setCurrencySymbol(e.target.value)}
-                placeholder="RM"
-                className="w-full bg-[#F4F9FE] border-2 border-[#2D3548] rounded-xl px-3 py-2 text-xs font-bold text-[#2D3548] shadow-[2px_2px_0px_#2D3548] focus:outline-none"
+                value={eventConfig.currencySymbol}
+                readOnly
+                disabled
+                className="w-full bg-[#E4EAF2] border-2 border-[#2D3548]/40 rounded-xl px-3 py-2 text-xs font-bold text-[#616D86] cursor-not-allowed"
               />
             </div>
 
@@ -209,10 +207,10 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
               </label>
               <input
                 type="text"
-                value={currencyCode}
-                onChange={(e) => setCurrencyCode(e.target.value)}
-                placeholder="MYR"
-                className="w-full bg-[#F4F9FE] border-2 border-[#2D3548] rounded-xl px-3 py-2 text-xs font-bold text-[#2D3548] shadow-[2px_2px_0px_#2D3548] focus:outline-none"
+                value={eventConfig.currencyCode}
+                readOnly
+                disabled
+                className="w-full bg-[#E4EAF2] border-2 border-[#2D3548]/40 rounded-xl px-3 py-2 text-xs font-bold text-[#616D86] cursor-not-allowed"
               />
             </div>
 
