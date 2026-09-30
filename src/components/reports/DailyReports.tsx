@@ -330,13 +330,13 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
         {/* Card 1: Gross Revenue */}
         <div className="p-4 rounded-3xl bg-[#FFD6E8] border-3 border-[#2D3548] shadow-[4px_4px_0px_#2D3548] flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-black uppercase text-[#BE185D] tracking-wider block">
+            <span className="text-[9px] font-medium uppercase text-[#BE185D] tracking-wider block">
               GROSS REVENUE
             </span>
-            <div className="text-2xl sm:text-3xl font-black text-[#2D3548] my-0.5 font-sans">
+            <div className="text-lg sm:text-xl font-medium text-[#2D3548] mt-0.5 font-sans">
               {formatCurrency(totalGrossRevenue, eventConfig.currencySymbol)}
             </div>
-            <span className="text-xs font-bold text-[#616D86] block">
+            <span className="text-[9px] font-normal text-[#616D86] mt-0.5 block">
               {activeTransactions.length} sales ({refundedTransactions.length} refunds)
             </span>
           </div>
@@ -348,17 +348,14 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
         {/* Card 2: Net Profit */}
         <div className="p-4 rounded-3xl bg-[#A3E7D0] border-3 border-[#2D3548] shadow-[4px_4px_0px_#2D3548] flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-black uppercase text-[#1B5E45] tracking-wider block">
+            <span className="text-[9px] font-medium uppercase text-[#1B5E45] tracking-wider block">
               EST. NET PROFIT
             </span>
-            <div className="text-2xl sm:text-3xl font-black text-[#1B5E45] my-0.5 font-sans">
+            <div className="text-lg sm:text-xl font-medium text-[#1B5E45] mt-0.5 font-sans">
               {formatCurrency(totalNetProfit, eventConfig.currencySymbol)}
             </div>
-            <span className="text-xs font-bold text-[#1B5E45]/80 block">
-              Margin:{' '}
-              <strong className="text-[#1B5E45]">
-                {totalGrossRevenue > 0 ? ((totalNetProfit / totalGrossRevenue) * 100).toFixed(1) : 0}%
-              </strong>
+            <span className="text-[9px] font-normal text-[#1B5E45]/80 mt-0.5 block">
+              Margin: {totalGrossRevenue > 0 ? ((totalNetProfit / totalGrossRevenue) * 100).toFixed(1) : 0}%
             </span>
           </div>
           <div className="w-12 h-12 rounded-2xl bg-white border-2 border-[#2D3548] text-[#1B5E45] flex items-center justify-center shadow-[2px_2px_0px_#2D3548]">
@@ -369,13 +366,13 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
         {/* Card 3: Items Sold */}
         <div className="p-4 rounded-3xl bg-[#D8EDFC] border-3 border-[#2D3548] shadow-[4px_4px_0px_#2D3548] flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-black uppercase text-[#2D3548] tracking-wider block">
+            <span className="text-[9px] font-medium uppercase text-[#2D3548] tracking-wider block">
               MERCH UNITS SOLD
             </span>
-            <div className="text-2xl sm:text-3xl font-black text-[#2D3548] my-0.5 font-sans">
-              {totalUnitsSold} <span className="text-sm font-bold text-[#616D86]">pcs</span>
+            <div className="text-lg sm:text-xl font-medium text-[#2D3548] mt-0.5 font-sans">
+              {totalUnitsSold} <span className="text-[10px] font-medium text-[#616D86]">pcs</span>
             </div>
-            <span className="text-xs font-bold text-[#616D86] block">
+            <span className="text-[9px] font-normal text-[#616D86] mt-0.5 block">
               Across {categoryBreakdown.length} categories
             </span>
           </div>
@@ -387,13 +384,13 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
         {/* Card 4: Average Order Value */}
         <div className="p-4 rounded-3xl bg-[#FFE699] border-3 border-[#2D3548] shadow-[4px_4px_0px_#2D3548] flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-black uppercase text-[#616D86] tracking-wider block">
+            <span className="text-[9px] font-medium uppercase text-[#616D86] tracking-wider block">
               AVG BASKET SIZE (AOV)
             </span>
-            <div className="text-2xl sm:text-3xl font-black text-[#2D3548] my-0.5 font-sans">
+            <div className="text-lg sm:text-xl font-medium text-[#2D3548] mt-0.5 font-sans">
               {formatCurrency(averageOrderValue, eventConfig.currencySymbol)}
             </div>
-            <span className="text-xs font-bold text-[#616D86] block">
+            <span className="text-[9px] font-normal text-[#616D86] mt-0.5 block">
               Discounts: -{formatCurrency(totalDiscountsGiven, eventConfig.currencySymbol)}
             </span>
           </div>
