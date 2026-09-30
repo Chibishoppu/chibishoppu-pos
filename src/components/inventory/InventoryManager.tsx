@@ -21,6 +21,7 @@ import {
 import { Product, EventConfig } from '../../types';
 import { CATEGORY_META } from '../../data/categories';
 import { formatCurrency, exportInventoryToCSV } from '../../utils/export';
+import { toCents, fromCents } from '../../utils/money';
 import { soundEngine } from '../../utils/audio';
 import { ProductFormModal } from './ProductFormModal';
 import { ProductThumb } from '../common/ProductThumb';
@@ -77,8 +78,8 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
 
   // Inventory stats calculations
   const totalStockUnits = useMemo(() => products.reduce((s, p) => s + p.stock, 0), [products]);
-  const totalRetailValue = useMemo(() => products.reduce((s, p) => s + (p.price * p.stock), 0), [products]);
-  const totalCostValue = useMemo(() => products.reduce((s, p) => s + (p.cost * p.stock), 0), [products]);
+  const totalRetailValue = useMemo(() => fromCents(products.reduce((s, p) => s + toCents(p.price) * p.stock, 0)), [products]);
+  const totalCostValue = useMemo(() => fromCents(products.reduce((s, p) => s + toCents(p.cost) * p.stock, 0)), [products]);
   const lowStockItems = useMemo(
     () => products.filter((p) => p.stock <= p.lowStockThreshold),
     [products]

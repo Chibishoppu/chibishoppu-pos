@@ -3,6 +3,7 @@ import { Dialog } from '@mui/material';
 import { ProductCategory, CartItem } from '../../types';
 import { CATEGORY_META } from '../../data/categories';
 import { soundEngine } from '../../utils/audio';
+import { roundMoney } from '../../utils/money';
 
 interface QuickCustomItemModalProps {
   open: boolean;
@@ -29,7 +30,7 @@ export const QuickCustomItemModal: React.FC<QuickCustomItemModalProps> = ({
     const parsedPrice = parseFloat(price);
     if (!name || isNaN(parsedPrice) || parsedPrice < 0) return;
 
-    const parsedCost = parseFloat(cost) || (parsedPrice * 0.4);
+    const parsedCost = parseFloat(cost) || roundMoney(parsedPrice * 0.4);
 
     const newItem: CartItem = {
       id: `custom-${Date.now()}`,
@@ -37,8 +38,8 @@ export const QuickCustomItemModal: React.FC<QuickCustomItemModalProps> = ({
       name: name.trim(),
       category,
       emoji: CATEGORY_META[category]?.emoji || '✨',
-      unitPrice: parsedPrice,
-      unitCost: parsedCost,
+      unitPrice: roundMoney(parsedPrice),
+      unitCost: roundMoney(parsedCost),
       quantity: Math.max(1, quantity),
       customNote: customNote.trim() ? customNote.trim() : undefined,
     };

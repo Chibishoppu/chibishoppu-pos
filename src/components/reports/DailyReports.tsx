@@ -31,6 +31,7 @@ import {
   RefundItemDetail,
 } from '../../types';
 import { formatCurrency, exportTransactionsToCSV } from '../../utils/export';
+import { toCents, fromCents, roundMoney, sumAmounts } from '../../utils/money';
 import { CATEGORY_META } from '../../data/categories';
 import { ZReportPrintModal } from './ZReportPrintModal';
 import { ReceiptModal } from '../pos/ReceiptModal';
@@ -72,15 +73,15 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
     return transactions.filter((t) => t.status === 'refunded');
   }, [transactions]);
 
-  const totalGrossRevenue = activeTransactions.reduce((s, t) => s + t.total, 0);
-  const totalCostOfGoods = activeTransactions.reduce((s, t) => s + t.totalCost, 0);
-  const totalDiscountsGiven = activeTransactions.reduce((s, t) => s + t.discountAmount, 0);
-  const totalNetProfit = totalGrossRevenue - totalCostOfGoods;
+  const totalGrossRevenue = sumAmounts(activeTransactions.map((t) => t.total));
+  const totalCostOfGoods = sumAmounts(activeTransactions.map((t) => t.totalCost));
+  const totalDiscountsGiven = sumAmounts(activeTransactions.map((t) => t.discountAmount));
+  const totalNetProfit = roundMoney(totalGrossRevenue - totalCostOfGoods);
   const totalUnitsSold = activeTransactions.reduce(
     (sum, t) => sum + t.items.reduce((iSum, item) => iSum + item.quantity, 0),
     0
   );
-  const averageOrderValue = activeTransactions.length > 0 ? totalGrossRevenue / activeTransactions.length : 0;
+  const averageOrderValue = activeTransactions.length > 0 ? roundMoney(totalGrossRevenue / activeTransactions.length) : 0;
 
   // 2. Payment Breakdown
   const paymentBreakdown = useMemo(() => {
@@ -90,45 +91,46 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
 
     activeTransactions.forEach((t) => {
       if (t.paymentMethod === 'cash') {
-        cash += t.total;
+        cash += toCents(t.total);
       } else if (t.paymentMethod === 'qr_pay') {
-        qr += t.total;
+        qr += toCents(t.total);
       } else if (t.paymentMethod === 'card') {
-        card += t.total;
+        card += toCents(t.total);
       } else if (t.paymentMethod === 'split' && t.splitDetail) {
-        cash += t.splitDetail.cashAmount;
+        cash += toCents(t.splitDetail.cashAmount);
         if (t.splitDetail.electronicMethod === 'qr_pay') {
-          qr += t.splitDetail.electronicAmount;
+          qr += toCents(t.splitDetail.electronicAmount);
         } else {
-          card += t.splitDetail.electronicAmount;
+          card += toCents(t.splitDetail.electronicAmount);
         }
       }
     });
 
-    return { cash, qr, card };
+    return { cash: fromCents(cash), qr: fromCents(qr), card: fromCents(card) };
   }, [activeTransactions]);
 
   // Expected Cash in Register Box
-  const expectedCashInDrawer = eventConfig.openingCashFloat + paymentBreakdown.cash;
+  const expectedCashInDrawer = sumAmounts([eventConfig.openingCashFloat, paymentBreakdown.cash]);
 
   // 3. Category Breakdown
   const categoryBreakdown = useMemo(() => {
     const map: Record<string, { unitsSold: number; revenue: number }> = {};
+    const grossCents = toCents(totalGrossRevenue);
 
     activeTransactions.forEach((t) => {
       t.items.forEach((item) => {
         const cat = item.category || 'other';
         if (!map[cat]) map[cat] = { unitsSold: 0, revenue: 0 };
         map[cat].unitsSold += item.quantity;
-        map[cat].revenue += item.unitPrice * item.quantity;
+        map[cat].revenue += toCents(item.unitPrice) * item.quantity;
       });
     });
 
     return Object.entries(map).map(([category, val]) => ({
       category,
       unitsSold: val.unitsSold,
-      revenue: val.revenue,
-      percentage: totalGrossRevenue > 0 ? (val.revenue / totalGrossRevenue) * 100 : 0,
+      revenue: fromCents(val.revenue),
+      percentage: grossCents > 0 ? (val.revenue / grossCents) * 100 : 0,
     }));
   }, [activeTransactions, totalGrossRevenue]);
 
@@ -148,11 +150,11 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
       if (!hourMap[hourStr]) {
         hourMap[hourStr] = { hour: hourStr, sales: 0, count: 0 };
       }
-      hourMap[hourStr].sales += t.total;
+      hourMap[hourStr].sales += toCents(t.total);
       hourMap[hourStr].count += 1;
     });
 
-    return Object.values(hourMap);
+    return Object.values(hourMap).map((h) => ({ ...h, sales: fromCents(h.sales) }));
   }, [activeTransactions]);
 
   // 5. Top Selling Products
@@ -172,12 +174,14 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
           };
         }
         itemMap[item.name].units += item.quantity;
-        itemMap[item.name].revenue += item.unitPrice * item.quantity;
-        itemMap[item.name].profit += (item.unitPrice - item.unitCost) * item.quantity;
+        itemMap[item.name].revenue += toCents(item.unitPrice) * item.quantity;
+        itemMap[item.name].profit += (toCents(item.unitPrice) - toCents(item.unitCost)) * item.quantity;
       });
     });
 
-    return Object.values(itemMap).sort((a, b) => b.revenue - a.revenue);
+    return Object.values(itemMap)
+      .map((v) => ({ ...v, revenue: fromCents(v.revenue), profit: fromCents(v.profit) }))
+      .sort((a, b) => b.revenue - a.revenue);
   }, [activeTransactions]);
 
   // Filtered transactions for the audit log table

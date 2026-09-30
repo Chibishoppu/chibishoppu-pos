@@ -14,6 +14,7 @@ import {
 import { DigitalReceiptDialog } from '../receipt/DigitalReceiptDialog';
 import { Transaction, EventConfig } from '../../types';
 import { formatCurrency } from '../../utils/export';
+import { lineTotal } from '../../utils/money';
 const officialLogo = `${import.meta.env.BASE_URL}ChibishoppuLogo2.jpeg`;
 
 interface ReceiptModalProps {
@@ -45,7 +46,7 @@ Receipt: ${transaction.receiptNumber}
 Event: ${transaction.eventName} (${transaction.boothNumber})
 Date: ${new Date(transaction.timestamp).toLocaleString()}
 Items:
-${transaction.items.map(i => ` • ${i.name} x${i.quantity} = ${formatCurrency(i.unitPrice * i.quantity, eventConfig.currencySymbol)}`).join('\n')}
+${transaction.items.map(i => ` • ${i.name} x${i.quantity} = ${formatCurrency(lineTotal(i.unitPrice, i.quantity), eventConfig.currencySymbol)}`).join('\n')}
 Total: ${formatCurrency(transaction.total, eventConfig.currencySymbol)} (${transaction.paymentMethod.toUpperCase()})
 Arigato gozaimasu for supporting our handmade craft booth! 🌸`;
 
@@ -170,7 +171,7 @@ Arigato gozaimasu for supporting our handmade craft booth! 🌸`;
                     <span className="font-bold">{item.name}</span>
                   </div>
                   <span className="font-black whitespace-nowrap">
-                    {formatCurrency(item.unitPrice * item.quantity, eventConfig.currencySymbol)}
+                    {formatCurrency(lineTotal(item.unitPrice, item.quantity), eventConfig.currencySymbol)}
                   </span>
                 </div>
                 <div className="text-[11px] text-[#616D86] pl-4 font-medium">

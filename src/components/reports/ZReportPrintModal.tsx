@@ -7,6 +7,7 @@ import {
 } from '@mui/icons-material';
 import { Transaction, EventConfig } from '../../types';
 import { formatCurrency } from '../../utils/export';
+import { toCents, fromCents, roundMoney, sumAmounts } from '../../utils/money';
 const officialLogo = `${import.meta.env.BASE_URL}ChibishoppuLogo2.jpeg`;
 
 interface ZReportPrintModalProps {
@@ -36,35 +37,35 @@ export const ZReportPrintModal: React.FC<ZReportPrintModalProps> = ({
     0
   );
 
-  const grossSales = activeTx.reduce((s, t) => s + t.total, 0);
-  const totalDiscounts = activeTx.reduce((s, t) => s + t.discountAmount, 0);
-  const totalTax = activeTx.reduce((s, t) => s + t.taxAmount, 0);
-  const estimatedCost = activeTx.reduce((s, t) => s + t.totalCost, 0);
-  const netProfit = grossSales - estimatedCost;
+  const grossSales = sumAmounts(activeTx.map((t) => t.total));
+  const totalDiscounts = sumAmounts(activeTx.map((t) => t.discountAmount));
+  const totalTax = sumAmounts(activeTx.map((t) => t.taxAmount));
+  const estimatedCost = sumAmounts(activeTx.map((t) => t.totalCost));
+  const netProfit = roundMoney(grossSales - estimatedCost);
 
-  // Payment Breakdown
-  const cashSales = activeTx.reduce((s, t) => {
-    if (t.paymentMethod === 'cash') return s + t.total;
-    if (t.paymentMethod === 'split' && t.splitDetail) return s + t.splitDetail.cashAmount;
+  // Payment Breakdown — accumulate in cents
+  const cashSales = fromCents(activeTx.reduce((s, t) => {
+    if (t.paymentMethod === 'cash') return s + toCents(t.total);
+    if (t.paymentMethod === 'split' && t.splitDetail) return s + toCents(t.splitDetail.cashAmount);
     return s;
-  }, 0);
+  }, 0));
 
-  const qrSales = activeTx.reduce((s, t) => {
-    if (t.paymentMethod === 'qr_pay') return s + t.total;
+  const qrSales = fromCents(activeTx.reduce((s, t) => {
+    if (t.paymentMethod === 'qr_pay') return s + toCents(t.total);
     if (t.paymentMethod === 'split' && t.splitDetail?.electronicMethod === 'qr_pay')
-      return s + t.splitDetail.electronicAmount;
+      return s + toCents(t.splitDetail.electronicAmount);
     return s;
-  }, 0);
+  }, 0));
 
-  const cardSales = activeTx.reduce((s, t) => {
-    if (t.paymentMethod === 'card') return s + t.total;
+  const cardSales = fromCents(activeTx.reduce((s, t) => {
+    if (t.paymentMethod === 'card') return s + toCents(t.total);
     if (t.paymentMethod === 'split' && t.splitDetail?.electronicMethod === 'card')
-      return s + t.splitDetail.electronicAmount;
+      return s + toCents(t.splitDetail.electronicAmount);
     return s;
-  }, 0);
+  }, 0));
 
-  const expectedCashInBox = openingFloat + cashSales;
-  const variance = countedCash !== undefined ? countedCash - expectedCashInBox : undefined;
+  const expectedCashInBox = sumAmounts([openingFloat, cashSales]);
+  const variance = countedCash !== undefined ? roundMoney(countedCash - expectedCashInBox) : undefined;
 
   const handlePrint = () => {
     window.print();

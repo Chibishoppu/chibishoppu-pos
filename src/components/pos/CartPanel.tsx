@@ -9,6 +9,7 @@ import {
 } from '@mui/icons-material';
 import { CartItem, EventConfig } from '../../types';
 import { formatCurrency } from '../../utils/export';
+import { toCents, fromCents, lineTotal } from '../../utils/money';
 import { soundEngine } from '../../utils/audio';
 
 interface CartPanelProps {
@@ -31,7 +32,7 @@ export const CartPanel: React.FC<CartPanelProps> = ({
   onOpenCheckout,
 }) => {
   const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+  const subtotal = fromCents(cart.reduce((sum, item) => sum + toCents(item.unitPrice) * item.quantity, 0));
 
   const handleQtyChange = (id: string, delta: number, currentQty: number) => {
     const nextQty = currentQty + delta;
@@ -132,7 +133,7 @@ export const CartPanel: React.FC<CartPanelProps> = ({
                   </span>
                   {item.quantity > 1 && (
                     <span className="text-[10px] font-bold text-[#616D86]">
-                      ({formatCurrency(item.unitPrice * item.quantity, eventConfig.currencySymbol)})
+                      ({formatCurrency(lineTotal(item.unitPrice, item.quantity), eventConfig.currencySymbol)})
                     </span>
                   )}
                 </div>

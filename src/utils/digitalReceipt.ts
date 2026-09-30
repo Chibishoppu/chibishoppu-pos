@@ -9,6 +9,7 @@
  * The viewer is strictly decode → validate → display. It never writes back.
  */
 import { Transaction, EventConfig } from '../types';
+import { roundMoney, lineTotal } from './money';
 
 export interface DigitalReceiptItem {
   n: string; // item name
@@ -42,8 +43,6 @@ export const RECEIPT_PAYLOAD_VERSION = 1;
  */
 const VIEWER_BASE = import.meta.env.VITE_RECEIPT_BASE || 'https://chibishoppu.github.io/chibishoppu-receipt/';
 
-const r2 = (n: number) => Math.round(n * 100) / 100;
-
 /** Transaction → compact receipt DTO. Values are copied, never recomputed. */
 export function buildReceiptPayload(tx: Transaction, cfg: EventConfig): DigitalReceiptPayload {
   return {
@@ -55,13 +54,13 @@ export function buildReceiptPayload(tx: Transaction, cfg: EventConfig): DigitalR
     i: tx.items.map((it) => ({
       n: it.name,
       q: it.quantity,
-      p: r2(it.unitPrice),
-      s: r2(it.unitPrice * it.quantity),
+      p: roundMoney(it.unitPrice),
+      s: lineTotal(it.unitPrice, it.quantity),
     })),
-    st: r2(tx.subtotal),
-    dc: tx.discountAmount > 0 ? r2(tx.discountAmount) : undefined,
-    tx: tx.taxAmount > 0 ? r2(tx.taxAmount) : undefined,
-    t: r2(tx.total),
+    st: roundMoney(tx.subtotal),
+    dc: tx.discountAmount > 0 ? roundMoney(tx.discountAmount) : undefined,
+    tx: tx.taxAmount > 0 ? roundMoney(tx.taxAmount) : undefined,
+    t: roundMoney(tx.total),
     pm: tx.paymentMethod,
   };
 }

@@ -18,6 +18,7 @@ import {
   SplitPaymentDetail,
 } from '../../types';
 import { formatCurrency, generateReceiptNumber } from '../../utils/export';
+import { toCents, fromCents, lineTotal } from '../../utils/money';
 import { soundEngine } from '../../utils/audio';
 const officialLogo = `${import.meta.env.BASE_URL}ChibishoppuLogo2.jpeg`;
 
@@ -52,9 +53,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   // Card terminal simulation
   const [isProcessingCard, setIsProcessingCard] = useState(false);
 
-  // Compute Subtotal & Total
-  const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
-  const totalCost = cart.reduce((sum, item) => sum + (item.unitCost * item.quantity), 0);
+  // Compute Subtotal & Total — all math in integer cents so stored values are exact
+  const subtotalCents = cart.reduce((sum, item) => sum + toCents(item.unitPrice) * item.quantity, 0);
+  const subtotal = fromCents(subtotalCents);
+  const totalCost = fromCents(
+    cart.reduce((sum, item) => sum + toCents(item.unitCost) * item.quantity, 0)
+  );
 
   // Discount calculation
   let discountRate = 0;
@@ -63,21 +67,24 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   else if (discountType === 'staff_friend') discountRate = 0.20; // 20%
   else if (discountType === 'custom') discountRate = Math.min(100, Math.max(0, customDiscountPercent)) / 100;
 
-  const discountAmount = subtotal * discountRate;
-  const taxableBase = Math.max(0, subtotal - discountAmount);
+  const discountCents = Math.round(subtotalCents * discountRate);
+  const discountAmount = fromCents(discountCents);
+  const taxableCents = Math.max(0, subtotalCents - discountCents);
   const taxRate = eventConfig.taxPercent / 100;
-  const taxAmount = taxableBase * taxRate;
-  const finalTotal = taxableBase + taxAmount;
-  const netProfit = finalTotal - totalCost;
+  const taxCents = Math.round(taxableCents * taxRate);
+  const taxAmount = fromCents(taxCents);
+  const finalCents = taxableCents + taxCents;
+  const finalTotal = fromCents(finalCents);
+  const netProfit = fromCents(finalCents - toCents(totalCost));
 
   // Tendered cash calculation
   const numericTendered = parseFloat(tenderedCash) || 0;
-  const changeDue = Math.max(0, numericTendered - finalTotal);
-  const isCashSufficient = numericTendered >= finalTotal;
+  const changeDue = fromCents(Math.max(0, toCents(numericTendered) - finalCents));
+  const isCashSufficient = toCents(numericTendered) >= finalCents;
 
   // Split calculation
   const numericSplitCash = parseFloat(splitCash) || 0;
-  const splitElectronicDue = Math.max(0, finalTotal - numericSplitCash);
+  const splitElectronicDue = fromCents(Math.max(0, finalCents - toCents(numericSplitCash)));
 
   // Reset or preset when opening
   useEffect(() => {
@@ -570,7 +577,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       <span className="text-[#616D86] text-[11px] ml-1">x{item.quantity}</span>
                     </div>
                     <span className="font-black text-[#2D3548] whitespace-nowrap">
-                      {formatCurrency(item.unitPrice * item.quantity, eventConfig.currencySymbol)}
+                      {formatCurrency(lineTotal(item.unitPrice, item.quantity), eventConfig.currencySymbol)}
                     </span>
                   </div>
                 ))}
