@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog } from '@mui/material';
 import {
   Save as SaveIcon,
@@ -35,6 +35,19 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
   const [taxPercent, setTaxPercent] = useState(eventConfig.taxPercent.toString());
   const [soundEnabled, setSoundEnabled] = useState(eventConfig.soundEffectsEnabled);
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  // Re-seed the form when a new event session starts (Close Event clears fields)
+  useEffect(() => {
+    setEventName(eventConfig.eventName);
+    setBoothNumber(eventConfig.boothNumber);
+    setCashierName(eventConfig.cashierName);
+    setLocation(eventConfig.location || '');
+    setStartDate(eventConfig.startDate || '');
+    setEndDate(eventConfig.endDate || '');
+    setOpeningCashFloat(eventConfig.openingCashFloat.toString());
+    setTaxPercent(eventConfig.taxPercent.toString());
+    setSoundEnabled(eventConfig.soundEffectsEnabled);
+  }, [eventConfig.eventId]);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -279,7 +292,7 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
             Close Event
           </h3>
           <p className="text-xs font-bold text-[#616D86]">
-            Downloads a full backup, then starts a fresh sales session. This event's sales stay archived in Sales Report — products & settings are kept.
+            Downloads a full backup, then starts a fresh sales session. This event's sales stay archived in Sales Report — products & photos are kept, event details reset.
           </p>
         </div>
 
@@ -313,7 +326,7 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
             A full backup file (<span className="text-[#2D3548]">chibishoppu-backup-*.json</span>) will download first, then this event's <span className="text-[#2D3548]">{currentEventTxCount} sale{currentEventTxCount === 1 ? '' : 's'}</span> will be archived and a fresh sales session starts.
           </p>
           <p className="text-xs font-bold text-[#616D86] leading-relaxed mt-2">
-            Products, photos and booth settings are kept. Archived sales remain viewable in Sales Report via the event filter.
+            Event name, booth, cashier, venue, dates & opening float are cleared for the next event. Products, photos, currency & tax settings are kept. Archived sales remain viewable in Sales Report via the event filter.
           </p>
           <div className="flex gap-2 justify-end mt-4">
             <button

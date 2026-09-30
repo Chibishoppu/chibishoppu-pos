@@ -458,6 +458,13 @@ export default function App() {
       const updated = await dbService.saveEventConfig({
         ...eventConfig,
         eventId: generateEventId(),
+        eventName: '',
+        boothNumber: '',
+        cashierName: '',
+        location: '',
+        startDate: '',
+        endDate: '',
+        openingCashFloat: 0,
       });
       setEventConfig(updated);
       setCart(await dbService.clearCartItems());
