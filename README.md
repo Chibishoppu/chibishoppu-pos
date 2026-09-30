@@ -9,6 +9,7 @@ An offline-first POS & inventory system designed for ACG (Anime/Comic/Games) con
 - **Daily Sales Reports** — hourly sales chart, payment breakdown, category analytics, refund/void, per-event filtering
 - **Z-Report Printing** — end-of-day / end-of-event cash drawer reconciliation
 - **Booth Settings** — event config, currency (RM/MYR), tax, sound effects
+- **Setup Gate** — blocks selling until an event name is configured (first run & after Close Event)
 - **Close Event** — auto-downloads a full JSON backup, archives the event's sales, and starts a fresh sales session
 - **Backup & Restore** — versioned local JSON export/import of the whole POS database (products, photos, sales, settings)
 - **Offline-first** — all data stored locally via IndexedDB (Dexie.js), no internet required after install

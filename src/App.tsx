@@ -33,6 +33,7 @@ const DailyReports = lazy(() =>
 );
 import { BoothSettings } from './components/settings/BoothSettings';
 import { BackupRestore } from './components/settings/BackupRestore';
+import { EventSetupGate } from './components/settings/EventSetupGate';
 import * as dbService from './services/db';
 import { createBackup, downloadBackup } from './services/backupService';
 import { generateEventId } from './utils/eventSession';
@@ -647,6 +648,12 @@ export default function App() {
             </div>
           </div>
         </footer>
+
+        {/* Setup gate — blocks the whole app until the event is configured
+            (first run, after Close Event, or an unconfigured restore) */}
+        {!eventConfig.eventName.trim() && (
+          <EventSetupGate eventConfig={eventConfig} onSave={setEventConfig} />
+        )}
 
         {/* Global Modals */}
         <QuickCustomItemModal
