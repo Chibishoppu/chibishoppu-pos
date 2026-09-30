@@ -103,10 +103,6 @@ export default function App() {
   // ---------------------------------------------------------------------------
   // Persistence — write changes back to DB
   // ---------------------------------------------------------------------------
-  useEffect(() => {
-    if (isLoading) return;
-    dbService.saveProduct; // no-op reference; individual mutations call DB directly
-  }, [products]);
 
   // Cart persistence
   useEffect(() => {
@@ -158,7 +154,7 @@ export default function App() {
         return updated;
       } else {
         const newItem: CartItem = {
-          id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+          id: `item-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
           productId: product.id,
           name: product.name,
           category: product.category,

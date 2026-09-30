@@ -10,6 +10,8 @@ import {
   Divider,
   Paper,
   IconButton,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import {
   Print as PrintIcon,
@@ -38,6 +40,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
 }) => {
   const receiptRef = useRef<HTMLDivElement>(null);
   const [qrOpen, setQrOpen] = useState(false);
+  const [copiedToast, setCopiedToast] = useState(false);
 
   if (!transaction) return null;
 
@@ -56,7 +59,7 @@ Total: ${formatCurrency(transaction.total, eventConfig.currencySymbol)} (${trans
 Arigato gozaimasu for supporting our handmade craft booth! 🌸`;
 
     navigator.clipboard.writeText(summary);
-    alert('Receipt summary copied to clipboard! ✨');
+    setCopiedToast(true);
   };
 
   return (
@@ -286,6 +289,17 @@ Arigato gozaimasu for supporting our handmade craft booth! 🌸`;
       transaction={transaction}
       eventConfig={eventConfig}
     />
+
+    <Snackbar
+      open={copiedToast}
+      autoHideDuration={2200}
+      onClose={() => setCopiedToast(false)}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+    >
+      <Alert severity="success" variant="filled" sx={{ fontWeight: 700, borderRadius: 3 }}>
+        Receipt summary copied! ✨
+      </Alert>
+    </Snackbar>
     </>
   );
 };
