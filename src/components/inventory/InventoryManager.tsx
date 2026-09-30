@@ -1,37 +1,24 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
-  Box,
-  Typography,
-  Paper,
-  Button,
-  TextField,
-  InputAdornment,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Chip,
-  IconButton,
-  Tooltip,
-  Alert,
 } from '@mui/material';
 import {
   Add as AddIcon,
   Search as SearchIcon,
   Edit as EditIcon,
   DeleteOutlined as DeleteIcon,
-  WarningAmber as WarningIcon,
   FileDownload as ExportIcon,
   FileUpload as ImportIcon,
   Inventory as RestockIcon,
-  AddCircleOutlined as PlusQtyIcon,
-  RemoveCircleOutlined as MinusQtyIcon,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
 } from '@mui/icons-material';
-import { Product, ProductCategory, EventConfig } from '../../types';
+import { Product, EventConfig } from '../../types';
 import { CATEGORY_META } from '../../data/categories';
 import { formatCurrency, exportInventoryToCSV } from '../../utils/export';
 import { soundEngine } from '../../utils/audio';

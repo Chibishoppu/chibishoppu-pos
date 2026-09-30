@@ -1,13 +1,8 @@
 import React from 'react';
 import {
-  IconButton,
-  Tooltip,
-} from '@mui/material';
-import {
   Add as AddIcon,
   Remove as RemoveIcon,
   DeleteOutlined as DeleteIcon,
-  ShoppingCartOutlined as CartEmptyIcon,
   FlashOn as QuickAddIcon,
   PointOfSale as CheckoutIcon,
   ClearAll as ClearCartIcon,

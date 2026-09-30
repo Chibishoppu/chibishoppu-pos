@@ -1,21 +1,7 @@
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  TextField,
-  Box,
-  Typography,
-  IconButton,
-  Paper,
-  InputAdornment,
-} from '@mui/material';
+import { Dialog } from '@mui/material';
 import {
   Close as CloseIcon,
-  Add as AddIcon,
-  Search as SearchIcon,
   Inventory as RestockIcon,
 } from '@mui/icons-material';
 import { Product, EventConfig } from '../../types';

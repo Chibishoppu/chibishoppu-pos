@@ -1,22 +1,12 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
-  Box,
-  Typography,
-  TextField,
-  InputAdornment,
-  Paper,
-  Button,
-  Badge,
-  Tooltip,
-} from '@mui/material';
-import {
   Search as SearchIcon,
   Clear as ClearIcon,
   Add as PlusIcon,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
 } from '@mui/icons-material';
-import { Product, ProductCategory, CartItem, EventConfig } from '../../types';
+import { Product, CartItem, EventConfig } from '../../types';
 import { CATEGORY_META } from '../../data/categories';
 import { ProductThumb } from '../common/ProductThumb';
 import { formatCurrency } from '../../utils/export';

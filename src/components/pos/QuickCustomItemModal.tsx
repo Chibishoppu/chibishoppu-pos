@@ -1,19 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  InputAdornment,
-  Box,
-  Typography,
-} from '@mui/material';
+import { Dialog } from '@mui/material';
 import { ProductCategory, CartItem } from '../../types';
 import { CATEGORY_META } from '../../data/categories';
 import { soundEngine } from '../../utils/audio';

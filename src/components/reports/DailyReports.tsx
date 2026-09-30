@@ -1,12 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import {
-  Box,
   Typography,
-  Paper,
   Button,
-  Chip,
-  Tabs,
-  Tab,
   Table,
   TableContainer,
   TableHead,
@@ -14,15 +9,11 @@ import {
   TableCell,
   TableBody,
   TablePagination,
-  IconButton,
-  Tooltip,
   TextField,
-  InputAdornment,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Divider,
 } from '@mui/material';
 import {
   TrendingUp as RevenueIcon,
@@ -31,26 +22,15 @@ import {
   AttachMoney as ProfitIcon,
   Download as ExportIcon,
   Print as PrintIcon,
-  Refresh as RefreshIcon,
   Search as SearchIcon,
   Undo as RefundIcon,
-  CheckCircle as SuccessIcon,
-  Close as CloseIcon,
-  Inventory2 as InventoryIcon,
-  Storefront as BoothIcon,
-  QueryStats as StatsIcon,
 } from '@mui/icons-material';
 import {
   Transaction,
   EventConfig,
-  Product,
-  DailySalesReport,
-  HourlySalesPoint,
-  PaymentBreakdown,
-  CategorySalesPoint,
   RefundItemDetail,
 } from '../../types';
-import { formatCurrency, exportTransactionsToCSV, exportInventoryToCSV } from '../../utils/export';
+import { formatCurrency, exportTransactionsToCSV } from '../../utils/export';
 import { CATEGORY_META } from '../../data/categories';
 import { ZReportPrintModal } from './ZReportPrintModal';
 import { ReceiptModal } from '../pos/ReceiptModal';
@@ -60,14 +40,12 @@ import { soundEngine } from '../../utils/audio';
 interface DailyReportsProps {
   transactions: Transaction[];
   eventConfig: EventConfig;
-  products: Product[];
   onRefundTransaction: (transactionId: string, refundDetails: RefundItemDetail[], reason: string) => void;
 }
 
 export const DailyReports: React.FC<DailyReportsProps> = ({
   transactions,
   eventConfig,
-  products,
   onRefundTransaction,
 }) => {
   const [selectedSubTab, setSelectedSubTab] = useState<number>(0);
@@ -216,27 +194,6 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
       );
     });
   }, [transactions, searchTxQuery]);
-
-  // Generate complete Daily Sales Report Object
-  const dailyReportObject: DailySalesReport = {
-    reportDate: new Date().toISOString().split('T')[0],
-    eventName: eventConfig.eventName,
-    boothNumber: eventConfig.boothNumber,
-    cashierName: eventConfig.cashierName,
-    openingCashFloat: eventConfig.openingCashFloat,
-    totalGrossRevenue,
-    totalDiscounts: totalDiscountsGiven,
-    totalTax: activeTransactions.reduce((s, t) => s + t.taxAmount, 0),
-    totalCostOfGoods,
-    netProfit: totalNetProfit,
-    transactionCount: activeTransactions.length,
-    unitsSold: totalUnitsSold,
-    averageOrderValue,
-    paymentBreakdown,
-    categorySales: categoryBreakdown,
-    hourlySales,
-    transactions: activeTransactions,
-  };
 
   const handleExportCSV = () => {
     soundEngine.playSuccessChime();
@@ -834,7 +791,6 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
         onClose={() => setIsZReportOpen(false)}
         transactions={transactions}
         eventConfig={eventConfig}
-        products={products}
         openingFloat={eventConfig.openingCashFloat}
         countedCash={countedActualCash !== '' ? parseFloat(countedActualCash) || 0 : undefined}
       />

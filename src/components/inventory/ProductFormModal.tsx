@@ -1,21 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  InputAdornment,
-  Box,
-  Typography,
-  Chip,
-  IconButton,
-} from '@mui/material';
+import { Dialog } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { Product, ProductCategory } from '../../types';
 import { CATEGORY_META } from '../../data/categories';

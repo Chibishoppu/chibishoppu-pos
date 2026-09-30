@@ -1,26 +1,7 @@
 import React, { useState } from 'react';
 import {
-  Box,
-  Typography,
-  Paper,
-  Button,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Switch,
-  FormControlLabel,
-  Divider,
-  InputAdornment,
-  Alert,
-} from '@mui/material';
-import {
   Save as SaveIcon,
-  Storefront as BoothIcon,
   RestartAlt as ResetIcon,
-  VolumeUp as SoundIcon,
-  Celebration as EventIcon,
 } from '@mui/icons-material';
 import { EventConfig } from '../../types';
 import { soundEngine } from '../../utils/audio';

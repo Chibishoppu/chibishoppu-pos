@@ -1,22 +1,11 @@
 import React, { useRef } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Box,
-  Typography,
-  Divider,
-  Paper,
-  IconButton,
-} from '@mui/material';
+import { Dialog } from '@mui/material';
 import {
   Print as PrintIcon,
   Close as CloseIcon,
   ReceiptLong as ReportIcon,
 } from '@mui/icons-material';
-import { Transaction, EventConfig, Product } from '../../types';
+import { Transaction, EventConfig } from '../../types';
 import { formatCurrency } from '../../utils/export';
 const officialLogo = `${import.meta.env.BASE_URL}ChibishoppuLogo2.jpeg`;
 
@@ -25,7 +14,6 @@ interface ZReportPrintModalProps {
   onClose: () => void;
   transactions: Transaction[];
   eventConfig: EventConfig;
-  products: Product[];
   openingFloat: number;
   countedCash?: number;
 }
@@ -35,7 +23,6 @@ export const ZReportPrintModal: React.FC<ZReportPrintModalProps> = ({
   onClose,
   transactions,
   eventConfig,
-  products,
   openingFloat,
   countedCash,
 }) => {

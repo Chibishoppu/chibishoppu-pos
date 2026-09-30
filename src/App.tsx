@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import {
   CssBaseline,
-  Box,
   Container,
   Snackbar,
   Alert,
@@ -541,7 +540,6 @@ export default function App() {
               <DailyReports
                 transactions={transactions}
                 eventConfig={eventConfig}
-                products={products}
                 onRefundTransaction={handleRefundTransaction}
               />
             </Container>

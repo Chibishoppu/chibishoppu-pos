@@ -1,27 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Box,
-  Typography,
-  Tabs,
-  Tab,
-  TextField,
-  Chip,
-  Paper,
-  Divider,
-  Alert,
-  IconButton,
-} from '@mui/material';
+import { Dialog } from '@mui/material';
 import {
   Payments as CashIcon,
   QrCode2 as QrIcon,
   CreditCard as CardIcon,
   CallSplit as SplitIcon,
-  CheckCircle as SuccessIcon,
   Close as CloseIcon,
   Discount as DiscountIcon,
 } from '@mui/icons-material';
