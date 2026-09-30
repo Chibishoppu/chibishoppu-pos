@@ -40,6 +40,9 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
   const [eventName, setEventName] = useState(eventConfig.eventName);
   const [boothNumber, setBoothNumber] = useState(eventConfig.boothNumber);
   const [cashierName, setCashierName] = useState(eventConfig.cashierName);
+  const [location, setLocation] = useState(eventConfig.location || '');
+  const [startDate, setStartDate] = useState(eventConfig.startDate || '');
+  const [endDate, setEndDate] = useState(eventConfig.endDate || '');
   const [currencySymbol, setCurrencySymbol] = useState(eventConfig.currencySymbol);
   const [currencyCode, setCurrencyCode] = useState(eventConfig.currencyCode);
   const [openingCashFloat, setOpeningCashFloat] = useState(eventConfig.openingCashFloat.toString());
@@ -53,6 +56,9 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
       eventName: eventName.trim(),
       boothNumber: boothNumber.trim(),
       cashierName: cashierName.trim(),
+      location: location.trim(),
+      startDate,
+      endDate,
       currencySymbol: currencySymbol || 'RM',
       currencyCode: currencyCode || 'MYR',
       openingCashFloat: parseFloat(openingCashFloat) || 0,
@@ -137,6 +143,44 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
                 value={cashierName}
                 onChange={(e) => setCashierName(e.target.value)}
                 placeholder="Enter cashier name"
+                className="w-full bg-[#F4F9FE] border-2 border-[#2D3548] rounded-xl px-3 py-2 text-xs font-bold text-[#2D3548] shadow-[2px_2px_0px_#2D3548] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-black uppercase text-[#2D3548] block mb-1">
+                Venue / Location
+              </label>
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="e.g. Mid Valley Exhibition Hall"
+                className="w-full bg-[#F4F9FE] border-2 border-[#2D3548] rounded-xl px-3 py-2 text-xs font-bold text-[#2D3548] shadow-[2px_2px_0px_#2D3548] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-black uppercase text-[#2D3548] block mb-1">
+                Event Start Date
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full bg-[#F4F9FE] border-2 border-[#2D3548] rounded-xl px-3 py-2 text-xs font-bold text-[#2D3548] shadow-[2px_2px_0px_#2D3548] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-black uppercase text-[#2D3548] block mb-1">
+                Event End Date
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                min={startDate || undefined}
                 className="w-full bg-[#F4F9FE] border-2 border-[#2D3548] rounded-xl px-3 py-2 text-xs font-bold text-[#2D3548] shadow-[2px_2px_0px_#2D3548] focus:outline-none"
               />
             </div>

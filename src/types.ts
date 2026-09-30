@@ -88,6 +88,9 @@ export interface EventConfig {
   eventName: string;
   boothNumber: string;
   cashierName: string;
+  location: string; // venue / hall name
+  startDate: string; // ISO date (yyyy-mm-dd)
+  endDate: string; // ISO date (yyyy-mm-dd)
   currencySymbol: string;
   currencyCode: string;
   openingCashFloat: number;
