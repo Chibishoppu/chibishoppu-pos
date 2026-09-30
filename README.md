@@ -6,9 +6,11 @@ An offline-first POS & inventory system designed for ACG (Anime/Comic/Games) con
 
 - **POS Register** — product grid, cart, checkout (cash / QR / card / split payment)
 - **Inventory Management** — add/edit/delete products, batch restock, low-stock alerts
-- **Daily Sales Reports** — hourly sales chart, payment breakdown, category analytics, refund/void
-- **Z-Report Printing** — end-of-day cash drawer reconciliation
-- **Booth Settings** — event config, currency (RM/MYR default), tax, stamp rally threshold
+- **Daily Sales Reports** — hourly sales chart, payment breakdown, category analytics, refund/void, per-event filtering
+- **Z-Report Printing** — end-of-day / end-of-event cash drawer reconciliation
+- **Booth Settings** — event config, currency (RM/MYR), tax, sound effects
+- **Close Event** — auto-downloads a full JSON backup, archives the event's sales, and starts a fresh sales session
+- **Backup & Restore** — versioned local JSON export/import of the whole POS database (products, photos, sales, settings)
 - **Offline-first** — all data stored locally via IndexedDB (Dexie.js), no internet required after install
 - **Currency: RM (Malaysian Ringgit)** by default
 
@@ -76,8 +78,11 @@ Data is stored in IndexedDB via Dexie.js. The database file is named `Chibishopp
 - **Windows (browser/PWA):** Browser's IndexedDB storage (per-origin)
 - **Android (Capacitor):** App's WebView IndexedDB storage
 
+### Event Sessions
+Transactions are stamped with an `eventId` (Dexie schema v3). The "Close Event" button in Settings downloads a JSON backup, then regenerates the session so new sales are grouped under the next event — past sales remain viewable via the event filter in Sales Report.
+
 ### Reset Data
-Use the "Reset Demo Stock" button in Booth Setup (Settings tab) to wipe all data and restore demo products + sample transactions.
+Use the "Clear All Data" button in Settings to wipe products, transactions and cart (booth settings are kept), or restore a JSON backup via the Backup & Restore card.
 
 ## NPM Scripts
 

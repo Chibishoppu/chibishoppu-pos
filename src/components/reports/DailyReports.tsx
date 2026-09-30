@@ -64,14 +64,49 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
   // Cash count drawer calculation state
   const [countedActualCash, setCountedActualCash] = useState<string>('');
 
+  // Event scope — 'current' | 'all' | a past eventId. Sales are stamped with
+  // the eventId active when they were made (see Close Event in Settings).
+  const [eventScope, setEventScope] = useState<string>('current');
+
+  // Past events that have archived sales, newest first
+  const pastEvents = useMemo(() => {
+    const map = new Map<string, { label: string; latest: number }>();
+    transactions.forEach((t) => {
+      const id = t.eventId ?? '';
+      if (!id || id === eventConfig.eventId) return;
+      const ts = Date.parse(t.timestamp) || 0;
+      const existing = map.get(id);
+      if (!existing || ts > existing.latest) {
+        map.set(id, { label: t.eventName || 'Past event', latest: ts });
+      }
+    });
+    return [...map.entries()]
+      .map(([id, v]) => ({ id, ...v }))
+      .sort((a, b) => b.latest - a.latest);
+  }, [transactions, eventConfig.eventId]);
+
+  // Transactions in the selected event scope (legacy rows count as current)
+  const eventTransactions = useMemo(() => {
+    if (eventScope === 'all') return transactions;
+    const target = eventScope === 'current' ? eventConfig.eventId : eventScope;
+    return transactions.filter((t) => (t.eventId ?? eventConfig.eventId) === target);
+  }, [transactions, eventScope, eventConfig.eventId]);
+
+  const scopeLabel =
+    eventScope === 'all'
+      ? 'All Events'
+      : eventScope === 'current'
+        ? eventConfig.eventName
+        : (pastEvents.find((e) => e.id === eventScope)?.label ?? 'Past event');
+
   // 1. Calculate Daily Analytics
   const activeTransactions = useMemo(() => {
-    return transactions.filter((t) => t.status === 'completed');
-  }, [transactions]);
+    return eventTransactions.filter((t) => t.status === 'completed');
+  }, [eventTransactions]);
 
   const refundedTransactions = useMemo(() => {
-    return transactions.filter((t) => t.status === 'refunded');
-  }, [transactions]);
+    return eventTransactions.filter((t) => t.status === 'refunded');
+  }, [eventTransactions]);
 
   const totalGrossRevenue = sumAmounts(activeTransactions.map((t) => t.total));
   const totalCostOfGoods = sumAmounts(activeTransactions.map((t) => t.totalCost));
@@ -186,7 +221,7 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
 
   // Filtered transactions for the audit log table
   const filteredTransactions = useMemo(() => {
-    return transactions.filter((t) => {
+    return eventTransactions.filter((t) => {
       const q = searchTxQuery.toLowerCase().trim();
       if (!q) return true;
       return (
@@ -197,11 +232,11 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
         t.items.some((i) => i.name.toLowerCase().includes(q))
       );
     });
-  }, [transactions, searchTxQuery]);
+  }, [eventTransactions, searchTxQuery]);
 
   const handleExportCSV = () => {
     soundEngine.playSuccessChime();
-    exportTransactionsToCSV(transactions, eventConfig);
+    exportTransactionsToCSV(eventTransactions, eventConfig);
   };
 
   const handleOpenRefund = (tx: Transaction) => {
@@ -258,7 +293,7 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
                 Sales & ACG Event Analytics
               </h2>
               <span className="bg-[#FF85A1] text-white text-xs font-black px-2.5 py-0.5 rounded-full border border-[#2D3548] shadow-[1px_1px_0px_#2D3548]">
-                🎪 {eventConfig.eventName}
+                🎪 {scopeLabel || 'No event set'}
               </span>
             </div>
             <p className="text-xs font-bold text-[#616D86]">
@@ -268,6 +303,21 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
+          <select
+            value={eventScope}
+            onChange={(e) => setEventScope(e.target.value)}
+            className="bg-white border-2 border-[#2D3548] rounded-xl px-3 py-1.5 text-xs font-black uppercase tracking-wide text-[#2D3548] shadow-[2px_2px_0px_#2D3548] focus:outline-none cursor-pointer"
+            aria-label="Filter sales by event"
+          >
+            <option value="current">Current Event</option>
+            {pastEvents.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.label}
+              </option>
+            ))}
+            <option value="all">All Events</option>
+          </select>
+
           <button
             onClick={handleExportCSV}
             className="flex items-center gap-1.5 bg-white hover:bg-[#F4F9FE] text-[#2D3548] border-2 border-[#2D3548] px-3.5 py-1.5 rounded-xl font-black text-xs uppercase shadow-[2px_2px_0px_#2D3548] active:translate-y-0.5"
@@ -793,7 +843,7 @@ export const DailyReports: React.FC<DailyReportsProps> = ({
       <ZReportPrintModal
         open={isZReportOpen}
         onClose={() => setIsZReportOpen(false)}
-        transactions={transactions}
+        transactions={eventTransactions}
         eventConfig={eventConfig}
         openingFloat={eventConfig.openingCashFloat}
         countedCash={countedActualCash !== '' ? parseFloat(countedActualCash) || 0 : undefined}

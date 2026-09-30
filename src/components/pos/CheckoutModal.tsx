@@ -145,6 +145,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       id: `tx-${Date.now()}`,
       receiptNumber: generateReceiptNumber(),
       timestamp: new Date().toISOString(),
+      eventId: eventConfig.eventId,
       eventName: eventConfig.eventName,
       boothNumber: eventConfig.boothNumber,
       cashierName: eventConfig.cashierName,

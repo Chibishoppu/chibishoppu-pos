@@ -56,6 +56,20 @@ class ChibishoppuDatabase extends Dexie {
     this.version(2).stores({
       images: 'productId',
     });
+
+    // v3: event sessions — every transaction gets an eventId so reports can
+    // scope per event. Pre-existing rows belonged to the single event that
+    // was configured at the time, so they inherit the current config's id.
+    this.version(3).upgrade(async (tx) => {
+      const cfg = await tx.table('eventConfig').get(1);
+      const eventId = cfg?.eventId || `evt-${Date.now().toString(36)}`;
+      if (cfg && !cfg.eventId) {
+        await tx.table('eventConfig').put({ ...cfg, eventId });
+      }
+      await tx.table('transactions').toCollection().modify((t: { eventId?: string }) => {
+        if (!t.eventId) t.eventId = eventId;
+      });
+    });
   }
 }
 

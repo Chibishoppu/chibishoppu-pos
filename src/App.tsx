@@ -34,6 +34,8 @@ const DailyReports = lazy(() =>
 import { BoothSettings } from './components/settings/BoothSettings';
 import { BackupRestore } from './components/settings/BackupRestore';
 import * as dbService from './services/db';
+import { createBackup, downloadBackup } from './services/backupService';
+import { generateEventId } from './utils/eventSession';
 
 export default function App() {
   // Navigation tab state: 0 = Register, 1 = Inventory, 2 = Sales Reports, 3 = Settings
@@ -445,6 +447,36 @@ export default function App() {
     });
   };
 
+  // Close Event — auto-downloads a backup, then starts a fresh event session.
+  // Old transactions stay archived under the previous eventId (viewable in
+  // Sales Report via the event filter); products & settings are kept.
+  const handleCloseEvent = async () => {
+    try {
+      const backup = await createBackup();
+      downloadBackup(backup, eventConfig.eventName || undefined);
+
+      const updated = await dbService.saveEventConfig({
+        ...eventConfig,
+        eventId: generateEventId(),
+      });
+      setEventConfig(updated);
+      setCart(await dbService.clearCartItems());
+
+      setToast({
+        open: true,
+        message: 'Backup downloaded — event closed. Sales archived; new session started.',
+        severity: 'success',
+      });
+    } catch (err) {
+      console.error('[close-event] failed:', err);
+      setToast({
+        open: true,
+        message: 'Could not close the event — nothing was changed.',
+        severity: 'error',
+      });
+    }
+  };
+
   // Reload all state after a backup restore
   const handleDataRestored = async () => {
     const [p, t, cfg, c] = await Promise.all([
@@ -563,8 +595,12 @@ export default function App() {
             <Container maxWidth="lg" sx={{ p: 0 }}>
               <BoothSettings
                 eventConfig={eventConfig}
+                currentEventTxCount={
+                  transactions.filter((t) => (t.eventId ?? eventConfig.eventId) === eventConfig.eventId).length
+                }
                 onUpdateEventConfig={setEventConfig}
                 onResetDemoData={handleResetDemoData}
+                onCloseEvent={handleCloseEvent}
               />
               <BackupRestore
                 onNotify={(message, severity) => setToast({ open: true, message, severity })}

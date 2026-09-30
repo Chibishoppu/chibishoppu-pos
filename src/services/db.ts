@@ -10,6 +10,7 @@
 import { db, seedDatabaseIfEmpty, resetDatabase } from './database';
 import { Product, Transaction, EventConfig, CartItem, RefundItemDetail } from '../types';
 import { INITIAL_EVENT_CONFIG } from '../data/initialData';
+import { generateEventId } from '../utils/eventSession';
 
 // ---------------------------------------------------------------------------
 // Initialization
@@ -172,6 +173,12 @@ export async function fetchEventConfig(): Promise<EventConfig> {
     // Enforce RM/MYR migration on any legacy saved config
     if (cfg.currencySymbol === '$' || cfg.currencyCode === 'USD' || !cfg.currencySymbol || !cfg.currencyCode) {
       const migrated = { ...cfg, currencySymbol: 'RM', currencyCode: 'MYR' };
+      await db.eventConfig.put({ ...migrated, id: 1 });
+      return migrated;
+    }
+    // Event sessions (v3+): guarantee every loaded config carries an eventId
+    if (!cfg.eventId) {
+      const migrated = { ...cfg, eventId: generateEventId() };
       await db.eventConfig.put({ ...migrated, id: 1 });
       return migrated;
     }

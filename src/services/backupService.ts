@@ -21,6 +21,7 @@
 import { db } from './database';
 import { Product, Transaction, EventConfig, CartItem } from '../types';
 import { INITIAL_EVENT_CONFIG } from '../data/initialData';
+import { generateEventId } from '../utils/eventSession';
 
 export const BACKUP_VERSION = 1;
 const BACKUP_APP_NAME = 'ChibishoppuPOS';
@@ -124,14 +125,15 @@ export async function createBackup(): Promise<BackupFile> {
 // Download
 // ---------------------------------------------------------------------------
 /** Serializes the backup and triggers a browser download. */
-export function downloadBackup(backup: BackupFile): void {
+export function downloadBackup(backup: BackupFile, label?: string): void {
   const json = JSON.stringify(backup, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   const date = backup.createdAt.slice(0, 10);
+  const slug = label ? `-${label.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}` : '';
   a.href = url;
-  a.download = `chibishoppu-backup-${date}.json`;
+  a.download = `chibishoppu-backup${slug}-${date}.json`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -216,6 +218,12 @@ export function parseAndValidateBackup(text: string): BackupValidation {
 async function applyBackup(backup: BackupFile): Promise<void> {
   const { products, transactions, eventConfig, cart, images } = backup.data;
 
+  // Normalize event sessions: old backups (pre-v3) lack eventId — stamp the
+  // config and every unstamped transaction so reports can scope per event.
+  const cfg: EventConfig = { ...(eventConfig ?? INITIAL_EVENT_CONFIG) };
+  if (!cfg.eventId) cfg.eventId = generateEventId();
+  const txs: Transaction[] = transactions.map((t) => (t.eventId ? t : { ...t, eventId: cfg.eventId }));
+
   await db.transaction(
     'rw',
     [db.products, db.transactions, db.eventConfig, db.cart, db.images],
@@ -227,8 +235,8 @@ async function applyBackup(backup: BackupFile): Promise<void> {
       await db.images.clear();
 
       if (products.length) await db.products.bulkPut(products);
-      if (transactions.length) await db.transactions.bulkPut(transactions);
-      await db.eventConfig.put({ ...(eventConfig ?? INITIAL_EVENT_CONFIG), id: 1 });
+      if (txs.length) await db.transactions.bulkPut(txs);
+      await db.eventConfig.put({ ...cfg, id: 1 });
       await db.cart.put({ id: 1, items: cart ?? [] });
       if (images?.length) {
         await db.images.bulkPut(

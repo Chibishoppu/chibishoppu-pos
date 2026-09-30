@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { Dialog } from '@mui/material';
 import {
   Save as SaveIcon,
   RestartAlt as ResetIcon,
+  Archive as ArchiveIcon,
 } from '@mui/icons-material';
 import { EventConfig } from '../../types';
 import { soundEngine } from '../../utils/audio';
@@ -9,15 +11,20 @@ const officialLogo = `${import.meta.env.BASE_URL}ChibishoppuLogo2.jpeg`;
 
 interface BoothSettingsProps {
   eventConfig: EventConfig;
+  currentEventTxCount: number;
   onUpdateEventConfig: (newConfig: EventConfig) => void;
   onResetDemoData: () => void;
+  onCloseEvent: () => void;
 }
 
 export const BoothSettings: React.FC<BoothSettingsProps> = ({
   eventConfig,
+  currentEventTxCount,
   onUpdateEventConfig,
   onResetDemoData,
+  onCloseEvent,
 }) => {
+  const [isCloseEventOpen, setIsCloseEventOpen] = useState(false);
   const [eventName, setEventName] = useState(eventConfig.eventName);
   const [boothNumber, setBoothNumber] = useState(eventConfig.boothNumber);
   const [cashierName, setCashierName] = useState(eventConfig.cashierName);
@@ -32,6 +39,7 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     const updated: EventConfig = {
+      eventId: eventConfig.eventId,
       eventName: eventName.trim(),
       boothNumber: boothNumber.trim(),
       cashierName: cashierName.trim(),
@@ -263,6 +271,71 @@ export const BoothSettings: React.FC<BoothSettingsProps> = ({
           </div>
         </div>
       </form>
+
+      {/* Close Event — auto-backup, archive sales, fresh event session */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-[#D8EDFC] border-3 sm:border-4 border-[#2D3548] shadow-[4px_4px_0px_#2D3548] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div>
+          <h3 className="font-black text-[#2D3548] text-sm sm:text-base uppercase tracking-wide">
+            Close Event
+          </h3>
+          <p className="text-xs font-bold text-[#616D86]">
+            Downloads a full backup, then starts a fresh sales session. This event's sales stay archived in Sales Report — products & settings are kept.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsCloseEventOpen(true)}
+          className="bg-white hover:bg-[#BCE0F9] text-[#2D3548] border-2 border-[#2D3548] px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wide shadow-[2px_2px_0px_#2D3548] active:translate-y-0.5 whitespace-nowrap flex items-center gap-1.5"
+        >
+          <ArchiveIcon sx={{ fontSize: 16 }} />
+          <span>Close Event</span>
+        </button>
+      </div>
+
+      {/* Close Event confirmation */}
+      <Dialog
+        open={isCloseEventOpen}
+        onClose={() => setIsCloseEventOpen(false)}
+        maxWidth="xs"
+        fullWidth
+        slotProps={{
+          paper: {
+            sx: { borderRadius: '24px', border: '3px solid #2D3548', boxShadow: '6px 6px 0px #2D3548' },
+          },
+        }}
+      >
+        <div className="p-5">
+          <h3 className="text-lg font-black text-[#2D3548] uppercase tracking-wider mb-1">
+            📦 Close Event?
+          </h3>
+          <p className="text-xs font-bold text-[#616D86] leading-relaxed">
+            A full backup file (<span className="text-[#2D3548]">chibishoppu-backup-*.json</span>) will download first, then this event's <span className="text-[#2D3548]">{currentEventTxCount} sale{currentEventTxCount === 1 ? '' : 's'}</span> will be archived and a fresh sales session starts.
+          </p>
+          <p className="text-xs font-bold text-[#616D86] leading-relaxed mt-2">
+            Products, photos and booth settings are kept. Archived sales remain viewable in Sales Report via the event filter.
+          </p>
+          <div className="flex gap-2 justify-end mt-4">
+            <button
+              type="button"
+              onClick={() => setIsCloseEventOpen(false)}
+              className="bg-white hover:bg-[#F4F9FE] text-[#2D3548] border-2 border-[#2D3548] px-4 py-2 rounded-xl font-black text-xs uppercase shadow-[2px_2px_0px_#2D3548] active:translate-y-0.5"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsCloseEventOpen(false);
+                onCloseEvent();
+              }}
+              className="bg-[#FF85A1] hover:bg-[#FF6B8D] text-white border-2 border-[#2D3548] px-4 py-2 rounded-xl font-black text-xs uppercase shadow-[2px_2px_0px_#2D3548] active:translate-y-0.5"
+            >
+              Backup & Close
+            </button>
+          </div>
+        </div>
+      </Dialog>
 
       {/* Danger Zone / Clear All Data */}
       <div className="p-4 sm:p-5 rounded-3xl bg-[#FFE2ED] border-3 sm:border-4 border-[#2D3548] shadow-[4px_4px_0px_#2D3548] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
