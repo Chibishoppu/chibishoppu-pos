@@ -2,7 +2,6 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Search as SearchIcon,
   Clear as ClearIcon,
-  Add as PlusIcon,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
 } from '@mui/icons-material';
@@ -139,14 +138,6 @@ export const PosRegister: React.FC<PosRegisterProps> = ({
               </button>
             )}
           </div>
-
-          <button
-            onClick={onOpenQuickCustom}
-            className="flex items-center gap-1 bg-[#D8EDFC] hover:bg-[#BCE0F9] text-[#2D3548] border-2 border-[#2D3548] px-3.5 py-2 rounded-2xl font-black text-xs sm:text-sm uppercase tracking-wider shadow-[2px_2px_0px_#2D3548] active:translate-y-0.5 active:shadow-[1px_1px_0px_#2D3548] transition-all whitespace-nowrap"
-          >
-            <PlusIcon fontSize="small" />
-            <span>Custom Item</span>
-          </button>
         </div>
 
         {/* Category Pills — visible scrollbar + arrow affordances on overflow */}
